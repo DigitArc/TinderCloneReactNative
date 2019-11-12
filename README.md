@@ -16,4 +16,4 @@
 
 ## Example Usage
 
-![alt text](https://github.com/DigitArc/reactNativeSwiperDeck/blob/master/tinderclone.gif)
+![alt text](https://github.com/DigitArc/TinderCloneReactNative/blob/master/tinderclone.gif)
