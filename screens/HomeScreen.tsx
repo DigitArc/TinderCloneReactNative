@@ -71,13 +71,13 @@ const BottomCard = props => {
   ) => {
     const clock = new Clock();
     const offset = new Value(0);
-    const springState = {
+    const state = {
       finished: new Value(0),
       position: new Value(0),
       velocity: new Value(0),
       time: new Value(0)
     };
-    const springConfig = {
+    const config = {
       stiffness: new Value(100),
       mass: new Value(1),
       damping: new Value(10),
@@ -87,65 +87,70 @@ const BottomCard = props => {
       toValue: new Value(0)
     };
 
-    const state = {
+    const timingState = {
       finished : new Value(0), 
       position : new Value(0), 
       frameTime : new Value(0), 
       time : new Value(0)
     }
-    const config = {
+    const timingConfig = {
       toValue : new Value(0), 
       duration : 400, 
       easing : Easing.linear
     }
 
     return block([
+      cond(and(clockRunning(clock), eq(gestureState, State.BEGAN)), [
+        debug("CATCHED ON START...", stopClock(clock))
+      ]),
       cond(neq(gestureState, State.END), [
         set(state.finished, 0),
         set(state.position, add(offset, value))
       ]),
       cond(eq(gestureState, State.END), [
-        cond(greaterThan(vel, 10), [
+        cond(greaterThan(vel, 100), [
           cond(and(not(clockRunning(clock)), not(state.finished)), [
             set(state.time, 0),
-            set(state.frameTime, 0),
+            set(state.velocity, 0),
             set(config.toValue, 500),
+            call([], () => setCurrentIndex(curr => curr - 1)),
             startClock(clock)
           ]),
-          timing(clock, state, config),
+          spring(clock, state, config),
           set(offset, state.position),
           cond(state.finished, [
             stopClock(clock),
-            call([], () => setCurrentIndex(curr => curr - 1))
           ])
         ]),
-        cond(lessOrEq(vel, -10), [
+        cond(lessOrEq(vel, -100), [
           cond(and(not(clockRunning(clock)), not(state.finished)), [
             set(state.time, 0),
-            set(state.frameTime, 0),
             set(config.toValue, -500),
+            set(state.velocity, 0),
+            call([], () => setCurrentIndex(curr => curr - 1)),
             startClock(clock)
           ]),
-          timing(clock, state, config),
-          set(offset, state.position),
-          cond(state.finished, [
-            stopClock(clock),
-            call([], () => setCurrentIndex(curr => curr - 1))
-          ])
-        ]),
-        cond(lessOrEq(abs(vel), 10), [
-          cond(and(not(clockRunning(clock)), not(state.finished)), [
-            set(state.time, 0),
-            set(state.frameTime, 0),
-            call([], () => config.duration = 200),
-            set(config.toValue, 0),
-            startClock(clock)
-          ]),
-          timing(clock, state, config),
+          spring(clock, state, config),
           set(offset, state.position),
           cond(state.finished, [
             stopClock(clock)
           ])
+        ]),
+        cond(lessOrEq(abs(vel), 100), [
+          cond(and(not(clockRunning(clock)), not(state.finished)), [
+            debug("STATE : ", gestureState),
+            set(state.time, 0),
+            set(state.velocity, vel),
+            // TO VALUE IS 0 FOR BOTH
+            set(config.toValue, 0),
+            debug("START CLOCK", startClock(clock))
+          ]),
+          spring(clock, state, config),
+          set(offset, state.position),
+          cond(state.finished, [
+            debug("STOP CLOCK", stopClock(clock)),
+          ])
+
         ])
 
       ]),
@@ -160,13 +165,13 @@ const BottomCard = props => {
   ) => {
     const clock = new Clock();
     const offset = new Value(0);
-    const springState = {
+    const state = {
       finished: new Value(0),
       position: new Value(0),
       velocity: new Value(0),
       time: new Value(0)
     };
-    const springConfig = {
+    const config = {
       stiffness: new Value(100),
       mass: new Value(1),
       damping: new Value(10),
@@ -176,61 +181,63 @@ const BottomCard = props => {
       toValue: new Value(0)
     };
 
-    const state = {
+    const timingState = {
       finished : new Value(0), 
       position : new Value(0), 
       frameTime : new Value(0), 
       time : new Value(0)
     }
-    const config = {
+    const timingConfig = {
       toValue : new Value(0), 
       duration : 400, 
       easing : Easing.linear
     }
 
     return block([
+      cond(and(clockRunning(clock), eq(gestureState, State.BEGAN)), [
+        debug("CATCHED ON START...", stopClock(clock))
+      ]),
       cond(neq(gestureState, State.END), [
         set(state.finished, 0),
         set(state.position, add(offset, value))
       ]),
       cond(eq(gestureState, State.END), [
-        cond(greaterThan(vel, 10), [
+        cond(greaterThan(vel, 100), [
           cond(and(not(clockRunning(clock)), not(state.finished)), [
             set(state.time, 0),
-            set(state.frameTime, 0),
+            set(state.velocity, 0),
             set(config.toValue, 500),
             startClock(clock)
           ]),
-          timing(clock, state, config),
+          spring(clock, state, config),
           set(offset, state.position),
           cond(state.finished, [
             stopClock(clock),
             call([], () => setCurrentIndex(curr => curr - 1))
           ])
         ]),
-        cond(lessOrEq(vel, -10), [
+        cond(lessOrEq(vel, -100), [
           cond(and(not(clockRunning(clock)), not(state.finished)), [
             set(state.time, 0),
-            set(state.frameTime, 0),
+            set(state.velocity, 0),
             set(config.toValue, 500),
             startClock(clock)
           ]),
-          timing(clock, state, config),
+          spring(clock, state, config),
           set(offset, state.position),
           cond(state.finished, [
             stopClock(clock),
             call([], () => setCurrentIndex(curr => curr - 1))
           ])
         ]),
-        cond(lessOrEq(abs(vel), 10), [
+        cond(lessOrEq(abs(vel), 100), [
           cond(and(not(clockRunning(clock)), not(state.finished)), [
             set(state.time, 0),
-            set(state.frameTime, 0),
-            call([], () => config.duration = 200),
+            set(state.velocity, vel),
             set(config.toValue, 0),
             startClock(clock)
           ]),
-          timing(clock, state, config),
+          spring(clock, state, config),
           set(offset, state.position),
           cond(state.finished, [
             stopClock(clock)
