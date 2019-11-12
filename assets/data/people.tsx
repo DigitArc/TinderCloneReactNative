@@ -2,7 +2,7 @@
 export const people = [
   {
     id: 2,
-    name: "Angelina Jolie",
+    name: "Angelina",
     age: 34,
     image: {
       uri:
@@ -20,11 +20,11 @@ export const people = [
   },
   {
     id: 1,
-    name: "Brad Pitt",
+    name: "Brad",
     age: 28,
     image: {
       uri:
         "http://cdn.24.co.za/files/Cms/General/d/5976/2fd287cfef5f41269f170d4ef1d4ecff.png"
     }
   }
-];
+].reverse();
